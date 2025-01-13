@@ -12,38 +12,47 @@ export default function Home() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     if (!file) {
       alert('Please select a file');
       return;
     }
-
+  
     const formData = new FormData();
-    formData.append('image', file); // Append the image file to the form data
-
-    setLoading(true); // Show loading state
-    setError(''); // Reset error state
-
+    formData.append('image', file);
+  
+    setLoading(true);
+    setError('');
+  
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/convert`, {
         method: 'POST',
         body: formData,
       });
-
-      if (!response.ok) {
-        throw new Error('Error creating SVG');
-      }
-
+  
+      // Log response status and body
+      console.log('Response Status:', response.status);
       const data = await response.json();
+      console.log('Response Data:', data);
+  
+      if (!response.ok) {
+        // Log error details for better debugging
+        throw new Error(`Error creating SVG: ${data.message || response.statusText}`);
+      }
+  
       if (data.path) {
-        setSvgPath(data.path); // Set the path to the SVG
+        setSvgPath(data.path);
+      } else {
+        setError('Unexpected response from the server.');
       }
     } catch (err) {
+      console.error('Error in fetch request:', err);
       setError('Error uploading the image. Please try again.');
     } finally {
-      setLoading(false); // Hide loading state
+      setLoading(false);
     }
   };
+
 
   return (
     <div>

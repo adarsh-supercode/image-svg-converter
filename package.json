@@ -12,11 +12,13 @@
   },
   "dependencies": {
     "formidable": "^3.5.2",
+    "imagetracerjs": "^1.2.6",
     "next": "15.1.4",
     "potrace": "^2.1.8",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "sharp": "^0.33.5"
+    "sharp": "^0.33.5",
+    "svgo": "^3.3.2"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

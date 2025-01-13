@@ -4,7 +4,6 @@ import path from 'path';
 import potrace from 'potrace';
 import sharp from 'sharp';
 
-// Disable body parser for file uploads
 export const config = {
   api: {
     bodyParser: false,
@@ -19,35 +18,43 @@ export default function handler(req, res) {
   const form = formidable({ multiples: true });
   form.parse(req, (err, fields, files) => {
     if (err) {
+      console.error('Form parse error:', err);  // Log error
       return res.status(500).json({ message: 'Error parsing form data', error: err });
     }
 
-    const inputImagePath = files.image[0].filepath; // Assuming single file upload
-    const outputSvgPath = path.join(process.cwd(), 'public', 'output.svg'); // Save in the 'public' folder
+    console.log('Received files:', files);  // Log received files
 
-    // Process image with Sharp and Potrace
+    if (!files.image || files.image.length === 0) {
+      return res.status(400).json({ message: 'No image file received' });
+    }
+
+    const inputImagePath = files.image[0].filepath;
+    const outputSvgPath = path.join(process.cwd(), 'public', 'output.svg');
+
     sharp(inputImagePath)
-      .resize(500) // Resize image to a smaller size before processing
+      .resize(500)  // Resize the image to ensure consistent output
       .toBuffer()
       .then((buffer) => {
         potrace.trace(buffer, {
-          threshold: 128,
+          threshold: 140,
           turnPolicy: potrace.TURNPOLICY_MINORITY,
           turdSize: 2,
           alphaMax: 1.0,
           optCurve: true,
-          optTolerance: 0.2,
+          optTolerance: 1.2,
         }, (err, svg) => {
           if (err) {
-            return res.status(500).json({ message: 'Error converting image', error: err });
+            console.error('Potrace error:', err);  // Log potrace error
+            return res.status(500).json({ message: 'Error converting image to SVG', error: err });
           }
 
-          fs.writeFileSync(outputSvgPath, svg); // Save the SVG file
-          res.status(200).json({ message: 'SVG created', path: '/output.svg' }); // Return the path to the SVG
+          fs.writeFileSync(outputSvgPath, svg);  // Save the SVG file
+          res.status(200).json({ message: 'SVG created', path: '/output.svg' });
         });
       })
       .catch((err) => {
-        res.status(500).json({ message: 'Error processing image', error: err });
+        console.error('Sharp processing error:', err);  // Log sharp error
+        res.status(500).json({ message: 'Error processing image with Sharp', error: err });
       });
   });
 }
