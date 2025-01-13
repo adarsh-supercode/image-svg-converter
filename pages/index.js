@@ -26,26 +26,20 @@ export default function Home() {
     setError('');
   
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/convert`, {
+      const response = await fetch(`/api/convert`, {
         method: 'POST',
         body: formData,
       });
   
-      // Log response status and body
-      console.log('Response Status:', response.status);
-      const data = await response.json();
-      console.log('Response Data:', data);
-  
       if (!response.ok) {
-        // Log error details for better debugging
+        const data = await response.json();
         throw new Error(`Error creating SVG: ${data.message || response.statusText}`);
       }
   
-      if (data.path) {
-        setSvgPath(data.path);
-      } else {
-        setError('Unexpected response from the server.');
-      }
+      const svgData = await response.text();  // Get SVG content as text
+      const blob = new Blob([svgData], { type: 'image/svg+xml' });
+      const url = URL.createObjectURL(blob);
+      setSvgPath(url);  // Set the blob URL for displaying and downloading the SVG
     } catch (err) {
       console.error('Error in fetch request:', err);
       setError('Error uploading the image. Please try again.');
@@ -53,6 +47,7 @@ export default function Home() {
       setLoading(false);
     }
   };
+  
   const handleDownload = () => {
     window.location.reload()  };
 
