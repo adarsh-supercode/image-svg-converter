@@ -36,10 +36,10 @@ export default function Home() {
         throw new Error(`Error creating SVG: ${data.message || response.statusText}`);
       }
   
-      const svgData = await response.text();  // Get SVG content as text
+      const svgData = await response.text();  
       const blob = new Blob([svgData], { type: 'image/svg+xml' });
       const url = URL.createObjectURL(blob);
-      setSvgPath(url);  // Set the blob URL for displaying and downloading the SVG
+      setSvgPath(url); 
     } catch (err) {
       console.error('Error in fetch request:', err);
       setError('Error uploading the image. Please try again.');

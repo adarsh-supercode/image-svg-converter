@@ -4,7 +4,7 @@ import sharp from 'sharp';
 
 export const config = {
   api: {
-    bodyParser: false, // Disable body parsing by default
+    bodyParser: false,
   },
 };
 
@@ -44,7 +44,7 @@ export default function handler(req, res) {
         }
         
         res.setHeader('Content-Type', 'image/svg+xml');
-        res.status(200).send(svg);  // Send the SVG content directly
+        res.status(200).send(svg);  
       });
     } catch (sharpErr) {
       console.error('Sharp processing error:', sharpErr);
