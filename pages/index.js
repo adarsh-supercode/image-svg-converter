@@ -24,6 +24,7 @@ export default function HomePage() {
 
     // Make sure the environment variable is used correctly
     const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+    console.log(apiUrl);
 
     // Check if the apiUrl is defined
     if (!apiUrl) {
