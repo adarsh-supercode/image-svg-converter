@@ -1,0 +1,39 @@
+# Node modules
+/node_modules/
+
+# Next.js build output
+/.next/
+
+# Vercel deployment folder
+/.vercel/
+
+# Output of the image conversion (SVG and temporary files)
+public/output.svg
+temp/
+
+# Logs
+*.log
+
+# Environment variables
+.env.local
+.env.development.local
+.env.production.local
+
+# IDE/editor specific files
+.vscode/
+.idea/
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Package lock and yarn lock files (optional)
+npm-debug.log
+yarn-debug.log
+yarn-error.log
+
+# .env files for sensitive data (you can add more specific `.env` files if necessary)
+.env
+
+# Optional: Add coverage directories from tests
+/coverage/
