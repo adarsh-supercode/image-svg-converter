@@ -7,7 +7,9 @@ export default function Home() {
   const [error, setError] = useState('');
 
   const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
+    const selectedFile = e.target.files[0];
+    console.log('Selected File:', selectedFile);
+    setFile(selectedFile);
   };
 
   const handleSubmit = async (e) => {
@@ -20,12 +22,13 @@ export default function Home() {
   
     const formData = new FormData();
     formData.append('image', file);
+    console.log('formData: ', formData);
   
     setLoading(true);
     setError('');
   
     try {
-      const response = await fetch(`https://image-svg-converter.vercel.app/api/convert`, {
+      const response = await fetch(`http://localhost:3000/api/convert`, {
         method: 'POST',
         body: formData,
       });
