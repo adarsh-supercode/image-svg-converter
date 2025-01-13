@@ -22,7 +22,15 @@ export default function HomePage() {
     const formData = new FormData();
     formData.append('image', file);
 
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL;  // Use the environment variable for API URL
+    // Make sure the environment variable is used correctly
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+    // Check if the apiUrl is defined
+    if (!apiUrl) {
+      console.error("API URL is not defined");
+      alert("API URL is not set correctly. Please check your configuration.");
+      return;
+    }
 
     try {
       const response = await fetch(`${apiUrl}/api/convert`, {
@@ -46,6 +54,13 @@ export default function HomePage() {
     }
   };
 
+  const handleDownload = () => {
+    const link = document.createElement('a');
+    link.href = svg; // Use the path from the response to download the file
+    link.download = 'converted-image.svg'; // The name for the downloaded file
+    link.click();
+  };
+
   return (
     <div style={{ textAlign: 'center', marginTop: '50px' }}>
       <h1>Image to SVG Converter</h1>
@@ -60,6 +75,8 @@ export default function HomePage() {
         <div style={{ marginTop: '20px' }}>
           <h3>Converted SVG:</h3>
           <object type="image/svg+xml" data={svg} width="100%" height="400px"></object>
+          <br />
+          <button onClick={handleDownload}>Download SVG</button>
         </div>
       )}
     </div>
