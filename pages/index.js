@@ -11,7 +11,6 @@ export default function Home() {
     console.log('Selected File:', selectedFile);
     setFile(selectedFile);
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
   
@@ -22,13 +21,12 @@ export default function Home() {
   
     const formData = new FormData();
     formData.append('image', file);
-    console.log('formData: ', formData);
   
     setLoading(true);
     setError('');
   
     try {
-      const response = await fetch(`http://localhost:3000/api/convert`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/convert`, {
         method: 'POST',
         body: formData,
       });
@@ -55,7 +53,6 @@ export default function Home() {
       setLoading(false);
     }
   };
-  
   const handleDownload = () => {
     window.location.reload()  };
 
