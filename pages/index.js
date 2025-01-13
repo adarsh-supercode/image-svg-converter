@@ -1,44 +1,66 @@
 import { useState } from 'react';
 
-export default function Home() {
-  const [message, setMessage] = useState('');
-  const [svgPath, setSvgPath] = useState('');
+export default function HomePage() {
+  const [file, setFile] = useState(null);
+  const [svg, setSvg] = useState(null);  // To display the returned SVG
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData(e.target);
+
+    if (!file) {
+      alert("Please upload an image!");
+      return;
+    }
+
+    setIsLoading(true);  // Set loading state to true
+
+    const formData = new FormData();
+    formData.append('image', file);
+
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL;  // Use the environment variable for API URL
 
     try {
-      const response = await fetch('/api/convert', {
+      const response = await fetch(`${apiUrl}/api/convert`, {
         method: 'POST',
         body: formData,
       });
 
-      const result = await response.json();
+      const data = await response.json();
+
       if (response.ok) {
-        setMessage('SVG created successfully!');
-        setSvgPath(result.path); // Display the SVG path for download
+        setSvg(data.path);  // Set the path of the SVG to be displayed
       } else {
-        setMessage(`Error: ${result.message}`);
+        console.error('Error:', data.message);
+        alert("Error converting image. Please try again.");
       }
     } catch (error) {
-      setMessage('An error occurred.');
+      console.error('Error:', error);
+      alert("Error during request. Please try again.");
+    } finally {
+      setIsLoading(false);  // Set loading state to false after request completes
     }
   };
 
   return (
-    <div>
+    <div style={{ textAlign: 'center', marginTop: '50px' }}>
       <h1>Image to SVG Converter</h1>
-      <form onSubmit={handleSubmit} encType="multipart/form-data">
-        <input type="file" name="image" accept="image/*" required />
-        <button type="submit">Convert</button>
+      <form onSubmit={handleSubmit}>
+        <input type="file" accept="image/*" onChange={handleFileChange} />
+        <button type="submit" disabled={isLoading}>
+          {isLoading ? 'Converting...' : 'Convert to SVG'}
+        </button>
       </form>
-      {message && <p>{message}</p>}
-      {svgPath && (
-        <p>
-          <a href={svgPath} download="output.svg">Download SVG</a>
-        </p>
-        
+
+      {svg && (
+        <div style={{ marginTop: '20px' }}>
+          <h3>Converted SVG:</h3>
+          <object type="image/svg+xml" data={svg} width="100%" height="400px"></object>
+        </div>
       )}
     </div>
   );
