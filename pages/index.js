@@ -25,7 +25,7 @@ export default function Home() {
     setError('');
   
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/convert`, {
+      const response = await fetch(`https://image-svg-converter.vercel.app/api/convert`, {
         method: 'POST',
         body: formData,
       });
@@ -52,6 +52,9 @@ export default function Home() {
       setLoading(false);
     }
   };
+  
+  const handleDownload = () => {
+    window.location.reload()  };
 
 
   return (
@@ -73,7 +76,7 @@ export default function Home() {
       {svgPath && (
         <div>
           <h3>SVG Created!</h3>
-          <a href={svgPath} download="output.svg">
+          <a href={svgPath} download="output.svg" onClick={handleDownload}>
             Download SVG
           </a>
           <br />
