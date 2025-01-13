@@ -25,6 +25,7 @@ export default function handler(req, res) {
     const inputImagePath = files.image[0].filepath; // Assuming single file upload
     const outputSvgPath = path.join(process.cwd(), 'public', 'output.svg'); // Save in the 'public' folder
 
+    // Process image with Sharp and Potrace
     sharp(inputImagePath)
       .resize(500) // Resize image to a smaller size before processing
       .toBuffer()
@@ -40,8 +41,9 @@ export default function handler(req, res) {
           if (err) {
             return res.status(500).json({ message: 'Error converting image', error: err });
           }
-          fs.writeFileSync(outputSvgPath, svg);
-          res.status(200).json({ message: 'SVG created', path: '/output.svg' });
+
+          fs.writeFileSync(outputSvgPath, svg); // Save the SVG file
+          res.status(200).json({ message: 'SVG created', path: '/output.svg' }); // Return the path to the SVG
         });
       })
       .catch((err) => {
